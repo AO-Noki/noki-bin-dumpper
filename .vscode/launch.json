@@ -1,0 +1,19 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python Debugger: Current File with Arguments",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "args": [
+                "-t", "3",
+                "-m", "3",
+                "-s", "1",
+                "-g", "C:\\Program Files (x86)\\AlbionOnline",
+                "-o", "G:\\Meu Drive\\Projetos\\A.O.Noki\\noki-dumpper\\output"
+            ]
+        }
+    ]
+}
