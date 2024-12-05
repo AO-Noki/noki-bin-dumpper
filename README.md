@@ -1,4 +1,6 @@
-# A.O. Noki
+![preview](preview.png)
+
+# A.O. Noki - Bin Dumper
 
 ## Descrição
 A.O. Noki é um extrator de dados para o jogo **Albion Online**. Este projeto permite que os usuários extraiam dados dos arquivos binários do cliente do jogo, facilitando a análise e manipulação das informações.
