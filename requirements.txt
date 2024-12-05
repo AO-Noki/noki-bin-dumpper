@@ -3,3 +3,4 @@ tqdm
 cryptography
 debugpy
 pytest
+pyinstaller
