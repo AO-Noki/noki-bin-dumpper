@@ -1,16 +1,2 @@
-# Python
-__pycache__/
-*.py[cod]
-*.pyo
-*.pyd
-*.db
-*.sqlite3
-
-# Diretórios de saída
-output/*
-
-# Arquivos de saída
-output/*.txt
-output/*.json
-output/*.csv
-output/*.xml
+.vscode/
+output/
