@@ -7,6 +7,7 @@ A.O. Noki é um extrator de dados para o jogo **Albion Online**. Este projeto pe
 Este projeto é compatível com **Python 3.12**. Certifique-se de ter essa versão instalada em seu ambiente.
 
 ## Instalação
+Lembre-se de possuir o cliente do jogo instalado e atualizado.
 Para instalar as dependências necessárias, execute o seguinte comando:
 
 ```bash

@@ -1,4 +1,5 @@
 import os
+import platform
 from enum import Enum
 from tqdm import tqdm
 import time
@@ -6,6 +7,7 @@ from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import padding
 import zlib
+import logging
 
 
 class ExportType(Enum):
@@ -26,8 +28,8 @@ class ServerType(Enum):
     Playground = 3
 
 
-# Classe responsavel por localizar os arquivos binarios
 def get_bin_files(game_data_folder):
+    """Localiza arquivos binários na pasta do jogo."""
     bin_files = []
     for root, dirs, files in tqdm(os.walk(game_data_folder), desc="Searching for binaries files..."):
         for file in files:
@@ -36,61 +38,45 @@ def get_bin_files(game_data_folder):
     return bin_files
 
 
-# Classe responsavel por descriptografar os arquivos binarios
 def decrypt_binary_file(input_path, new_file_path, key, iv):
-    with open(input_path, 'rb') as input_file:
-        file_buffer = input_file.read()
+    """Descriptografa um arquivo binário e salva o resultado em um novo arquivo."""
+    try:
+        with open(input_path, 'rb') as input_file:
+            file_buffer = input_file.read()
 
-    # Descriptografa os conteudo
-    cipher = Cipher(algorithms.TripleDES(key), modes.CBC(iv), backend=default_backend())
-    decryptor = cipher.decryptor()
-    decrypted_data = decryptor.update(file_buffer) + decryptor.finalize()
+        cipher = Cipher(algorithms.TripleDES(key), modes.CBC(iv), backend=default_backend())
+        decryptor = cipher.decryptor()
+        decrypted_data = decryptor.update(file_buffer) + decryptor.finalize()
 
-    # Desfaz o padding
-    unpadder = padding.PKCS7(64).unpadder()
-    decrypted_data = unpadder.update(decrypted_data) + unpadder.finalize()
+        unpadder = padding.PKCS7(64).unpadder()
+        decrypted_data = unpadder.update(decrypted_data) + unpadder.finalize()
 
-    # Verifica os cabeçalhos de compressão
-    if decrypted_data.startswith(b'\x1f\x8b\x08'):
-        # Dados comprimidos, descomprime
-        decompressed_data = zlib.decompress(decrypted_data, zlib.MAX_WBITS | 16)
-    else:
-        # Dados sem compressão
-        decompressed_data = decrypted_data
+        if decrypted_data.startswith(b'\x1f\x8b\x08'):
+            decompressed_data = zlib.decompress(decrypted_data, zlib.MAX_WBITS | 16)
+        else:
+            decompressed_data = decrypted_data
 
-    # Obtém o diretório pai do novo arquivo
-    output_dir = os.path.dirname(new_file_path)
-
-    # Cria o diretório se não existir
-    os.makedirs(output_dir, exist_ok=True)
-
-    # Salvar os dados descomprimidos no arquivo de saída
-    with open(new_file_path, 'wb') as output_file:
-        output_file.write(decompressed_data)
+        os.makedirs(os.path.dirname(new_file_path), exist_ok=True)
+        with open(new_file_path, 'wb') as output_file:
+            output_file.write(decompressed_data)
+    except Exception as e:
+        logging.error(f"Erro ao descriptografar o arquivo '{input_path}': {e}")
 
 
-# Classe responsavel por criar diretorios
-def create_directory(output_path, directory_name):
-    # Verifica se o diretório já existe
-    new_directory_path = os.path.join(output_path, directory_name)
-    if not os.path.exists(new_directory_path):
-        # Cria o diretório
-        os.makedirs(new_directory_path, exist_ok=True)
-        return True
-    else:
-        return False
-
-
-# Classe para limpeza do console
 def clear_console():
-    # Limpar o console
-    os.system('cls' if os.name == 'nt' else 'clear')
+    """Limpa o console dependendo do sistema operacional."""
+    os.system('cls' if platform.system() == 'Windows' else 'clear')
 
 
-# Classe principal do A.O. Noki
+def create_directory(path, subdirectory):
+    """Cria um diretório e um subdiretório, se não existirem."""
+    full_path = os.path.join(path, subdirectory)
+    os.makedirs(full_path, exist_ok=True)
+
+
 class Program:
+    """Classe principal do A.O. Noki."""
 
-    # Construtor da classe principal do A.O. Noki
     def __init__(self, main_game_folder, output_folder_path, export_type, export_mode, server_type):
         self.main_game_folder = main_game_folder
         self.output_folder_path = output_folder_path
@@ -101,8 +87,8 @@ class Program:
         self.key = bytes([48, 239, 114, 71, 66, 242, 4, 50])
         self.iv = bytes([14, 166, 220, 137, 219, 237, 220, 79])
 
-    # Inicio do Processo
     def on_execute(self):
+        """Inicia o processo de extração."""
         logo = r"""              ___          ___                   ___          ___          ___               
              /  /\        /  /\                 /__/\        /  /\        /__/|      ___     
             /  /::\      /  /::\                \  \:\      /  /::\      |  |:|     /  /\    
@@ -120,70 +106,48 @@ class Program:
                                         [ Dumpper ]
         """
 
-        # Limpa o console
         clear_console()
-
-        # Exibe o logo
         print(logo)
-
-        # Dorme o processo por 4 segundos
         time.sleep(4)
 
-        # Define a string do tipo da exportação
-        if self.export_type == ExportType.Both:
-            export_type_string = "XML and JSON"
-        elif self.export_type == ExportType.Json:
-            export_type_string = "JSON"
-        else:
-            export_type_string = "XML"
-
-        # Define a string de qual servidor será usado
-        server_type_string = "game"
-        if self.server_type == ServerType.Staging:
-            server_type_string = "staging"
-        if self.server_type == ServerType.Playground:
-            server_type_string = "playground"
-
-        # Cria os diretorios de saida
+        server_type_string = self.get_server_type_string()
         create_directory(self.output_folder_path, 'raw')
 
-        # Informa sobre o início da operação
         print("--- Starting Extraction Operation ---")
+        game_data_folder = self.get_game_data_folder(server_type_string)
 
-        # Inicia a construção do diretorio da GameData
-        server_game_folder = os.path.join(self.main_game_folder, server_type_string)
-        server_game_folder = server_game_folder.replace("'", "")
-        albion_online_data_folder = os.path.join(server_game_folder, "Albion-Online_Data")
-        streaming_assets_folder = os.path.join(albion_online_data_folder, "StreamingAssets")
-        game_data_folder = os.path.join(streaming_assets_folder, "GameData")
-
-        # Imprime o caminho da pasta principal do jogo
         print(f"Working on folder: {game_data_folder}")
-
-        # Busca os arquivos .bin na GameData
         self.bin_files = get_bin_files(game_data_folder)
 
-        # Verifica se existem arquivos .bin
-        if len(self.bin_files) == 0:
+        if not self.bin_files:
             print("No bin files found")
             return
-        else:
-            # Imprime o total de arquivos .bin
-            print(f"Found {len(self.bin_files)} bin files")
 
-            # Percorre os arquivos .bin
-            for bin_file in tqdm(self.bin_files, desc="Decrypting...", unit_scale=True, unit='s'):
-                # Calcula o caminho relativo para o arquivo .bin
-                rel_path = os.path.relpath(bin_file, game_data_folder)
-
-                # Cria o caminho para o novo arquivo .bin na pasta 'raw'
-                rel_file_path = os.path.join('raw', rel_path.replace('..\\', ''))
-                new_file_name = os.path.splitext(rel_file_path)[0] + ".txt"
-
-                # Cria o caminho para o novo arquivo .bin no diretorio 'output'
-                new_file_path = os.path.join(self.output_folder_path, new_file_name)
-
-                # Descriptografa o arquivo .bin e salva como .txt
-                decrypt_binary_file(bin_file, new_file_path, self.key, self.iv)
+        print(f"Found {len(self.bin_files)} bin files")
+        self.process_bin_files()
 
         input("Press Enter to continue...")
+
+    def get_server_type_string(self):
+        """Retorna a string correspondente ao tipo de servidor."""
+        if self.server_type == ServerType.Staging:
+            return "staging"
+        elif self.server_type == ServerType.Playground:
+            return "playground"
+        return "game"
+
+    def get_game_data_folder(self, server_type_string):
+        """Constrói o caminho para a pasta GameData."""
+        server_game_folder = os.path.join(self.main_game_folder, server_type_string)
+        albion_online_data_folder = os.path.join(server_game_folder, "Albion-Online_Data")
+        streaming_assets_folder = os.path.join(albion_online_data_folder, "StreamingAssets")
+        return os.path.join(streaming_assets_folder, "GameData")
+
+    def process_bin_files(self):
+        """Processa os arquivos binários encontrados."""
+        for bin_file in tqdm(self.bin_files, desc="Decrypting...", unit_scale=True, unit='s'):
+            rel_path = os.path.relpath(bin_file, self.get_game_data_folder(self.get_server_type_string()))
+            rel_file_path = os.path.join('raw', rel_path.replace('..\\', ''))
+            new_file_name = os.path.splitext(rel_file_path)[0] + ".txt"
+            new_file_path = os.path.join(self.output_folder_path, new_file_name)
+            decrypt_binary_file(bin_file, new_file_path, self.key, self.iv)
