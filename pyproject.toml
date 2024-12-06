@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "noki-dumper"
+version = "1.0.0"
+description = "Extrator de dados para Albion Online"
+authors = [{ name = "Noki Team" }]
+license = { text = "GPL-3.0" }
+requires-python = ">=3.12"
+dependencies = [
+    "rich",
+    "pycryptodomex",
+    "pydantic",
+    "tqdm"
+]
+
+[project.scripts]
+noki = "noki.core.program:main"
+
+[tool.setuptools]
+packages = ["noki"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+
+[tool.poetry.scripts]
+run = "python -m noki"
+build = "pyinstaller --onefile noki-dumper.py"
+test = "pytest"
+lint = "flake8" 

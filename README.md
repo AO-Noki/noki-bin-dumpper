@@ -1,64 +1,130 @@
 ![preview](preview.png)
 
+[![en](https://img.shields.io/badge/lang-english-red.svg)](./README.en.md)
+
 # A.O. Noki - Bin Dumper
 
-## Descrição
-A.O. Noki é um extrator de dados para o jogo **Albion Online**. Este projeto permite que os usuários extraiam dados dos arquivos binários do cliente do jogo, facilitando a análise e manipulação das informações.
+### Descrição
+A.O. Noki é um extrator de dados multiplataforma para o jogo **Albion Online**. Esta ferramenta extrai e converte dados binários do cliente do jogo em formatos legíveis (RAW e JSON), mantendo logs detalhados do processo.
 
-## Compatibilidade
-Este projeto é compatível com **Python 3.12**. Certifique-se de ter essa versão instalada em seu ambiente.
+### Funcionalidades
+- Detecção automática do cliente do jogo
+- Descriptografia de arquivos binários
+- Múltiplos formatos de exportação (RAW e JSON)
+- Suporte para servidores Live e Test
+- Sistema de logging avançado com rotação de arquivos
+- Validação automática dos dados convertidos
+- Relatórios detalhados de validação
+- Compatibilidade multiplataforma
+- Interface com barra de progresso em tempo real
 
-## Instalação
-Lembre-se de possuir o cliente do jogo instalado e atualizado.
-Para instalar as dependências necessárias, execute o seguinte comando:
+### Detalhes Técnicos
+
+#### Criptografia
+- Algoritmo: Triple DES (3DES)
+- Modo: CBC (Cipher Block Chaining)
+- Tamanho da chave: 128 bits
+- IV: 8 bytes
+- Padding: PKCS7
+
+#### Compressão
+- Algoritmo: ZLIB
+- Window Bits: 31 (15 + 16 para formato gzip)
+- Formato de saída: XML com encoding UTF-8 + BOM
+
+#### Sistema de Logging
+- Rotação automática de arquivos (máx. 5MB por arquivo)
+- Logs separados para validação e operações gerais
+- Relatórios JSON e TXT para análise detalhada
+- Categorização automática de arquivos processados
+
+### Compatibilidade
+- Windows 7/8/10/11
+- Linux (todas distribuições principais)
+- macOS 10.15+
+- Python 3.12+
+
+### Instalação
+
+#### Via Executável (Recomendado)
+1. Baixe a última versão na [página de releases](../../releases)
+2. Extraia o arquivo (se necessário)
+3. Execute o programa:
+   - Windows: `noki.exe`
+   - Linux/macOS: `./noki` ou `python -m noki`
+
+#### Via Código Fonte
+1. Certifique-se de ter Python 3.12+ instalado
+2. Clone o repositório:
+   ```bash
+   git clone https://github.com/AO-Noki/noki-bin-dumpper.git
+   cd noki-bin-dumpper
+   ```
+3. Instale o pacote:
+   ```bash
+   # Instalação básica
+   pip install .
+   
+   # Ou com dependências de desenvolvimento
+   pip install -e ".[dev]"
+   ```
+
+### Uso
+
+#### Argumentos de Linha de Comando
 
 ```bash
-pip install -r requirements.txt
+noki [-h] [-t {1,2,3}] [-s {1,2}] [-g GAME_PATH] [-o OUTPUT_PATH]
 ```
 
-## Uso
-Para executar o extrator, utilize o seguinte comando:
-
-```bash
-python noki-dumper.py -t <export_type> -m <export_mode> -s <server> -g <main_game_folder> -o <output_folder_path>
-```
-
-### Argumentos
-
-- `-t`, `--export`: Tipo de exportação.
-  - `1`: XML
-  - `2`: JSON
+##### Argumentos Opcionais:
+- `-h, --help`: Mostra mensagem de ajuda
+- `-t, --export-type`: Formato de exportação
+  - `1`: Apenas RAW
+  - `2`: Apenas JSON Filtrado
   - `3`: Ambos (padrão)
+- `-s, --server`: Tipo de servidor
+  - `1`: Servidor Live (padrão)
+  - `2`: Servidor Test
+- `-g, --game-path`: Caminho de instalação do jogo (detectado automaticamente se não fornecido)
+- `-o, --output-path`: Diretório de saída (usa './output' se não fornecido)
 
-- `-m`, `--export-mode`: Modo de exportação.
-  - `1`: Extração de Itens
-  - `2`: Extração de Localização
-  - `3`: Tudo (padrão)
+#### Exemplos
 
-- `-s`, `--server`: Tipo de servidor.
-  - `1`: Live (padrão)
-  - `2`: Test Server
-
-- `-g`, `--main-game-folder`: Caminho para a pasta principal do jogo (obrigatório).
-
-- `-o`, `--output-folder-path`: Caminho para a pasta de saída onde os dados extraídos serão salvos (obrigatório).
-
-## Exemplo de Uso
 ```bash
-python noki-dumper.py -t 3 -m 3 -s 1 -g "C:\Program Files (x86)\AlbionOnline" -o "C:\output"
+# Uso básico (detecta caminho do jogo automaticamente)
+noki
 ```
 
-## Contribuição
-Sinta-se à vontade para contribuir com melhorias e correções. Para contribuir, siga estas etapas:
+#### Especifica caminho do jogo e diretório de saída
 
-1. Faça um fork do repositório.
-2. Crie uma nova branch (`git checkout -b feature/nome-da-sua-feature`).
-3. Faça suas alterações e commit (`git commit -m 'Adicionando uma nova feature'`).
-4. Envie para o repositório remoto (`git push origin feature/nome-da-sua-feature`).
-5. Abra um Pull Request.
+```bash
+noki -g "C:\Program Files (x86)\Albion Online" -o "C:\albion_data"
+```
 
-## Licença
-Este projeto está licenciado sob a MIT License. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+#### Exporta apenas dados JSON do servidor de teste
 
-## Contato
-Para dúvidas ou sugestões, entre em contato através do Discord ***n0k0606***.
+```bash
+noki -t 2 -s 2
+```
+
+### Estrutura de Logs
+- `logs/`: Diretório principal de logs
+  - `noki-Dumpper_YYYYMMDD_HHMMSS.log`: Log principal de operações
+  - `validation/`: Logs de validação
+    - `validation_YYYYMMDD_HHMMSS.log`: Log detalhado de validações
+    - `validation_report_YYYYMMDD_HHMMSS.json`: Relatório em formato JSON
+    - `validation_summary_YYYYMMDD_HHMMSS.txt`: Resumo em formato texto
+
+### Processo de Descriptografia
+1. Leitura do arquivo binário
+2. Descriptografia usando 3DES em modo CBC
+3. Remoção do padding PKCS7
+4. Descompressão ZLIB (wbits=31)
+5. Decodificação UTF-8 com remoção de BOM
+6. Validação do XML resultante
+7. Conversão para JSON (quando aplicável)
+8. Validação da conversão
+
+### Contato
+Discord: **n0k0606**

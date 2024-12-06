@@ -1,1 +1,0 @@
-pyinstaller --onefile noki-dumper.py

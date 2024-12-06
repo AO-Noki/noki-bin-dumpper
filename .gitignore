@@ -1,6 +1,44 @@
+# IDEs e editores
 .vscode/
-output/
-dist/
-build/
-*.pyc
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Arquivos Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
 .pytest_cache/
+.coverage
+htmlcov/
+
+# Ambiente virtual
+venv/
+env/
+ENV/
+
+# Builds e distribuição
+build/
+dist/
+*.egg-info/
+*.egg
+*.spec
+wheels/
+
+# Logs e outputs
+*.log
+output/
+logs/
+noki-dumper.log
+
+# Arquivos temporários
+*.tmp
+*.bak
+*.swp
+*~
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
