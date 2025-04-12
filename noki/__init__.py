@@ -2,19 +2,17 @@
 Noki Bin Dumper - Extrator de dados do Albion Online
 """
 
-from noki.config import settings
+from noki.core.config import config
 
-__version__ = settings.VERSION
-__author__ = settings.AUTHOR
-__license__ = settings.LICENSE
+__version__ = config.VERSION
+__author__ = config.AUTHOR
+__license__ = config.LICENSE
 
-from noki.core.program import Program
-from noki.enums.export_type import ExportType
 from noki.enums.server_type import ServerType
+from noki.core import Platform
 
 __all__ = [
-    "Program",
-    "ExportType",
+    "Platform",
     "ServerType",
-    "settings"
+    "config"
 ] 

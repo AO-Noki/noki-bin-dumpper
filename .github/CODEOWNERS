@@ -1,0 +1,25 @@
+# Configuração global de revisores padrão
+* @AO-Noki
+
+# Arquivos específicos do core
+/noki/core/ @AO-Noki
+
+# Configurações de plataforma específicas
+/noki/platforms/ @AO-Noki
+
+# Utilitários
+/noki/utils/ @AO-Noki
+
+# Testes
+/tests/ @AO-Noki
+
+# Configurações do projeto
+pyproject.toml @AO-Noki
+setup.py @AO-Noki
+
+# Documentação
+*.md @AO-Noki
+/docs/ @AO-Noki
+
+# GitHub Actions e configurações de CI
+/.github/ @AO-Noki 
