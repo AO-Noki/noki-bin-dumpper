@@ -10,18 +10,21 @@ description = "Albion Online Bin Dumper"
 authors = [{name = "Brendown Ferreira", email = "br3n0k@gmail.com"}]
 license = { text = "Freeware" }
 dependencies = [
+    "black",
     "cryptography",
-    "tqdm",
+    "flake8",
+    "isort",
+    "mypy",
+    "packaging",
+    "pathlib",
     "pydantic",
-    "rich",
-    "typer",
+    "pyinstaller",
     "pytest",
     "pytest-cov",
-    "black",
-    "isort",
-    "flake8",
-    "mypy",
-    "pyinstaller"
+    "requests",
+    "rich",
+    "tqdm",
+    "typer"
 ]
 
 [project.scripts]
