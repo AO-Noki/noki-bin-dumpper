@@ -40,7 +40,7 @@
 
 ## 🧪 Test Results
 
-```
+```text
 ============================================= tests coverage ==============================================
 Name                        Stmts   Miss  Cover
 src\__init__.py                 6      0   100%
@@ -100,7 +100,7 @@ python -m main --path "C:\Program Files (x86)\Albion Online" --server live --out
 
 ### Options
 
-```
+```text
 --path PATH           Albion Online installation path (required)
 --server [live|test]  Game server to export the files from (default: live)
 --output PATH         Output directory (optional, defaults to ./output)
@@ -117,7 +117,7 @@ python build.py
 
 Options:
 
-```
+```text
 --dir                 Build as directory instead of single file
 --no-console          Hide console (for GUI applications only)
 --no-zip              Don't create ZIP package
@@ -143,7 +143,7 @@ This project is distributed as Freeware.
 ## 📧 Contact
 
 - GitHub: [https://github.com/AO-Noki](https://github.com/AO-Noki)
-- Email: br3n0k@gmail.com
+- Email: <br3n0k@gmail.com>
 
 ## 🔗 Links
 
