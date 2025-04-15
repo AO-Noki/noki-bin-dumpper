@@ -89,24 +89,22 @@ pip install -e .
 ### Executable
 
 ```bash
-noki
+noki --path "C:\Program Files (x86)\Albion Online" --server live --output "./output"
 ```
 
 ### Via Python
 
 ```bash
-python -m main
+python -m main --path "C:\Program Files (x86)\Albion Online" --server live --output "./output"
 ```
 
 ### Options
 
 ```
---directory PATH       Albion Online installation directory
---output PATH          Directory to save extracted files
---server [live|test]   Server to extract data from (default: live)
---verbose              Show detailed information during processing
---version              Show version and exit
---help                 Show this help message and exit
+--path PATH           Albion Online installation path (required)
+--server [live|test]  Game server to export the files from (default: live)
+--output PATH         Output directory (optional, defaults to ./output)
+--help                Show help message and exit
 ```
 
 ## 🏗️ Build
