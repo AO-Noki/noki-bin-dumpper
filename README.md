@@ -5,40 +5,40 @@
 </p>
 
 <p align="center">
-  <strong>Extrator e conversor de arquivos .bin do Albion Online</strong>
+  <strong>Albion Online .bin file extractor and converter</strong>
 </p>
 
 <p align="center">
   <a href="https://github.com/AO-Noki/noki-bin-dumpper/actions/workflows/release.yml">
-    <img src="https://github.com/AO-Noki/noki-bin-dumpper/actions/workflows/release.yml/badge.svg" alt="Publicar Release">
+    <img src="https://github.com/AO-Noki/noki-bin-dumpper/actions/workflows/release.yml/badge.svg" alt="Publish Release">
   </a>
   <a href="https://github.com/AO-Noki/noki-bin-dumpper/actions/workflows/test_and_release.yml">
-    <img src="https://github.com/AO-Noki/noki-bin-dumpper/actions/workflows/test_and_release.yml/badge.svg" alt="Testes Completos">
+    <img src="https://github.com/AO-Noki/noki-bin-dumpper/actions/workflows/test_and_release.yml/badge.svg" alt="Complete Tests">
   </a>
   <a href="https://github.com/AO-Noki/noki-bin-dumpper/actions/workflows/code_quality.yml">
-    <img src="https://github.com/AO-Noki/noki-bin-dumpper/actions/workflows/code_quality.yml/badge.svg" alt="Qualidade de Código">
+    <img src="https://github.com/AO-Noki/noki-bin-dumpper/actions/workflows/code_quality.yml/badge.svg" alt="Code Quality">
   </a>
 </p>
 
-## 📋 Descrição
+## 📋 Description
 
-O **NOKI Bin Dumpper** é uma ferramenta para extrair e converter os arquivos .bin criptografados do jogo Albion Online. Ele decodifica os arquivos binários para formatos XML e JSON, permitindo o acesso e estudo das informações do jogo.
+**NOKI Bin Dumpper** is a tool for extracting and converting encrypted .bin files from Albion Online. It decodes binary files to XML and JSON formats, allowing access to and study of the game's information.
 
 <p align="center">
-  <img src="preview.png" alt="Noki Bin Dumpper em execução" width="80%">
+  <img src="preview.png" alt="Noki Bin Dumpper running" width="80%">
 </p>
 
-## ✨ Características
+## ✨ Features
 
-- **Detecção automática** da instalação do Albion Online
-- **Suporte multi-plataforma**: Windows, macOS e Linux
-- **Extração inteligente** dos arquivos .bin do jogo
-- **Conversão** para XML e JSON
-- **Interface de linha de comando** intuitiva
-- **Suporte para servidores** Live e Test
-- **Integração com CI/CD** para releases automáticas
+- **Automatic detection** of Albion Online installation
+- **Multi-platform support**: Windows, macOS, and Linux
+- **Smart extraction** of game .bin files
+- **Conversion** to XML and JSON
+- **Intuitive command-line interface**
+- **Support for Live and Test servers**
+- **CI/CD integration** for automatic releases
 
-## 🧪 Resultados dos Testes
+## 🧪 Test Results
 
 ```
 ============================================= tests coverage ==============================================
@@ -59,19 +59,19 @@ TOTAL                         313    141    55%
 =========================================== 10 passed in 3.18s ============================================
 ```
 
-## 🚀 Instalação
+## 🚀 Installation
 
-### Via pip (recomendado)
+### Via pip (recommended)
 
 ```bash
 pip install noki-bin-dumpper
 ```
 
-### Executável pré-compilado
+### Pre-compiled executable
 
-Baixe a última versão para seu sistema operacional em [Releases](https://github.com/AO-Noki/noki-bin-dumpper/releases).
+Download the latest version for your operating system from [Releases](https://github.com/AO-Noki/noki-bin-dumpper/releases).
 
-### Instalar do código-fonte
+### Install from source code
 
 ```bash
 git clone https://github.com/AO-Noki/noki-bin-dumpper.git
@@ -79,14 +79,14 @@ cd noki-bin-dumpper
 pip install -e .
 ```
 
-## 🔧 Requisitos
+## 🔧 Requirements
 
-- Python 3.10+ (recomendado Python 3.13)
-- Albion Online instalado (para extração direta)
+- Python 3.10+ (Python 3.13 recommended)
+- Albion Online installed (for direct extraction)
 
-## 📖 Modo de Uso
+## 📖 Usage
 
-### Executável
+### Executable
 
 ```bash
 noki
@@ -98,50 +98,51 @@ noki
 python -m main
 ```
 
-### Opções
+### Options
 
 ```
---diretorio PATH      Diretório de instalação do Albion Online
---saida PATH          Diretório para salvar os arquivos extraídos
---servidor [live|test] Servidor para extrair os dados (padrão: live)
---verbose             Mostrar informações detalhadas durante o processamento
---versao              Mostrar a versão e sair
---ajuda               Mostrar esta mensagem de ajuda e sair
+--directory PATH       Albion Online installation directory
+--output PATH          Directory to save extracted files
+--server [live|test]   Server to extract data from (default: live)
+--verbose              Show detailed information during processing
+--version              Show version and exit
+--help                 Show this help message and exit
 ```
 
 ## 🏗️ Build
 
-Para construir o executável:
+To build the executable:
 
 ```bash
 python build.py
 ```
 
-Opções:
+Options:
+
 ```
---dir                 Construir como diretório em vez de arquivo único
---no-console          Ocultar console (apenas para aplicações GUI)
---no-zip              Não criar pacote ZIP
---info                Mostrar informações de build e sair
+--dir                 Build as directory instead of single file
+--no-console          Hide console (for GUI applications only)
+--no-zip              Don't create ZIP package
+--info                Show build information and exit
 ```
 
-## 🔄 Fluxo de Desenvolvimento
+## 🔄 Development Workflow
 
-1. Os testes automatizados verificam a funcionalidade básica
-2. A análise de qualidade de código garante padrões consistentes
-3. CI/CD compila e testa em múltiplas plataformas e versões de Python
-4. As releases são publicadas automaticamente quando uma tag v*.*.* é criada
+1. Automated tests verify basic functionality
+2. Code quality analysis ensures consistent standards
+3. CI/CD compiles and tests on multiple platforms and Python versions
+4. Releases are automatically published when a v*.*.* tag is created
 
-## 📜 Licença
+## 📜 License
 
-Este projeto é distribuído como Freeware.
+This project is distributed as Freeware.
 
-## 👥 Colaboradores
+## 👥 Contributors
 
-- Brendown Ferreira - Desenvolvedor Principal
-- Contribuidores da Comunidade AO-Noki
+- Brendown Ferreira - Lead Developer
+- AO-Noki Community Contributors
 
-## 📧 Contato
+## 📧 Contact
 
 - GitHub: [https://github.com/AO-Noki](https://github.com/AO-Noki)
 - Email: br3n0k@gmail.com
@@ -149,5 +150,5 @@ Este projeto é distribuído como Freeware.
 ## 🔗 Links
 
 - [Albion Online](https://albiononline.com/)
-- [Repositório no GitHub](https://github.com/AO-Noki/noki-bin-dumpper)
-- [Changelog](CHANGELOG.md) 
+- [GitHub Repository](https://github.com/AO-Noki/noki-bin-dumpper)
+- [Changelog](CHANGELOG.md)
