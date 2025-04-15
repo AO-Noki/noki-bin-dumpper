@@ -1,24 +1,25 @@
-name: Testes e Release
+name: Testes Completos
 
 on:
   push:
     branches: [ "main" ]
-    tags:
-      - 'v*'
   pull_request:
     branches: [ "main" ]
   workflow_dispatch:
 
 jobs:
   test:
+    name: Testes em ${{ matrix.os }} / Python ${{ matrix.python-version }}
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
-        os: [windows-latest]
-        python-version: ['3.13']
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ['3.10', '3.11', '3.12', '3.13']
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout do repositório
+      uses: actions/checkout@v4
     
     - name: Configurar Python ${{ matrix.python-version }}
       uses: actions/setup-python@v5
@@ -30,81 +31,31 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         python -m pip install -e .
-      shell: pwsh
+        python -m pip install pytest pytest-xdist pytest-cov
+      shell: bash
     
-    - name: Criar diretórios para teste
+    - name: Criar diretórios de teste
       run: |
-        New-Item -Path "tests/data" -ItemType Directory -Force
-        New-Item -Path "tests/output" -ItemType Directory -Force
-        New-Item -Path "logs/validation" -ItemType Directory -Force
-      shell: pwsh
+        mkdir -p tests/data
+        mkdir -p tests/output
+        mkdir -p logs/validation
+      shell: bash
     
     - name: Executar testes
       run: |
-        python -m pytest tests/ -v
-      shell: pwsh
+        python -m pytest tests/ -v --cov=src/ --cov-report=xml
+      shell: bash
     
-    - name: Armazenar resultado dos testes
+    - name: Upload dos resultados de testes
+      if: always()
       uses: actions/upload-artifact@v4
       with:
-        name: test-results
-        path: |
-          tests/output/
-          logs/
-        if-no-files-found: warn
-
-  build:
-    needs: test
-    if: startsWith(github.ref, 'refs/tags/v')
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [windows-latest]
-        python-version: ['3.13']
-
-    steps:
-    - uses: actions/checkout@v4
-    
-    - name: Configurar Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
+        name: test-results-${{ matrix.os }}-${{ matrix.python-version }}
+        path: tests/output/
+        
+    - name: Upload de cobertura para Codecov
+      if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.13'
+      uses: codecov/codecov-action@v4
       with:
-        python-version: ${{ matrix.python-version }}
-        cache: 'pip'
-    
-    - name: Instalar dependências
-      run: |
-        python -m pip install --upgrade pip
-        python -m pip install -e .
-      shell: pwsh
-    
-    - name: Construir executável
-      run: |
-        pyinstaller --onefile --name noki-bin-dumpper main.py --add-data "noki;noki"
-      shell: pwsh
-    
-    - name: Extrair versão da tag
-      id: get_version
-      run: |
-        $version = $env:GITHUB_REF -replace 'refs/tags/v', ''
-        echo "VERSION=$version" >> $env:GITHUB_OUTPUT
-      shell: pwsh
-    
-    - name: Criar Release
-      uses: softprops/action-gh-release@v1
-      with:
-        name: Noki Bin Dumpper ${{ steps.get_version.outputs.VERSION }}
-        draft: false
-        prerelease: false
-        files: |
-          dist/noki-bin-dumpper.exe
-        body: |
-          ## Noki Bin Dumpper ${{ steps.get_version.outputs.VERSION }}
-          
-          ### Instalação
-          
-          - Faça o download do arquivo executável `noki-bin-dumpper.exe`
-          - Execute-o com o caminho para o diretório de instalação do Albion Online
-          
-          ```
-          noki-bin-dumpper.exe --path "C:\Program Files (x86)\Albion Online" --server live
-          ``` 
+        file: ./coverage.xml
+        fail_ci_if_error: false 

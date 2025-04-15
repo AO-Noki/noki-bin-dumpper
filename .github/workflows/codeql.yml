@@ -1,4 +1,4 @@
-name: "CodeQL"
+name: "Análise CodeQL"
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
 
 jobs:
   analyze:
-    name: Analyze
+    name: Analisar
     runs-on: windows-latest
     permissions:
       actions: read
@@ -23,18 +23,18 @@ jobs:
         language: [ 'python' ]
 
     steps:
-    - name: Checkout repository
+    - name: Checkout do repositório
       uses: actions/checkout@v4
 
-    - name: Initialize CodeQL
+    - name: Inicializar CodeQL
       uses: github/codeql-action/init@v3
       with:
         languages: ${{ matrix.language }}
 
-    - name: Autobuild
+    - name: Compilação automática
       uses: github/codeql-action/autobuild@v3
 
-    - name: Perform CodeQL Analysis
+    - name: Executar análise CodeQL
       uses: github/codeql-action/analyze@v3
       with:
         category: "/language:${{ matrix.language }}" 
