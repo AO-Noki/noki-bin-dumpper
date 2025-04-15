@@ -1,130 +1,152 @@
-![preview](preview.png)
+# AO NOKI - Bin Dumpper
 
-[![en](https://img.shields.io/badge/lang-english-red.svg)](./README.en.md)
+<p align="center">
+  <img src="assets/icon.png" alt="AO NOKI Logo" width="200">
+</p>
 
-# A.O. Noki - Bin Dumper
+<p align="center">
+  <strong>Albion Online .bin file extractor and converter</strong>
+</p>
 
-### Descrição
-A.O. Noki é um extrator de dados multiplataforma para o jogo **Albion Online**. Esta ferramenta extrai e converte dados binários do cliente do jogo em formatos legíveis (RAW e JSON), mantendo logs detalhados do processo.
+<p align="center">
+  <a href="https://github.com/AO-Noki/noki-bin-dumpper/actions/workflows/release.yml">
+    <img src="https://github.com/AO-Noki/noki-bin-dumpper/actions/workflows/release.yml/badge.svg" alt="Publish Release">
+  </a>
+  <a href="https://github.com/AO-Noki/noki-bin-dumpper/actions/workflows/test_and_release.yml">
+    <img src="https://github.com/AO-Noki/noki-bin-dumpper/actions/workflows/test_and_release.yml/badge.svg" alt="Complete Tests">
+  </a>
+  <a href="https://github.com/AO-Noki/noki-bin-dumpper/actions/workflows/code_quality.yml">
+    <img src="https://github.com/AO-Noki/noki-bin-dumpper/actions/workflows/code_quality.yml/badge.svg" alt="Code Quality">
+  </a>
+</p>
 
-### Funcionalidades
-- Detecção automática do cliente do jogo
-- Descriptografia de arquivos binários
-- Múltiplos formatos de exportação (RAW e JSON)
-- Suporte para servidores Live e Test
-- Sistema de logging avançado com rotação de arquivos
-- Validação automática dos dados convertidos
-- Relatórios detalhados de validação
-- Compatibilidade multiplataforma
-- Interface com barra de progresso em tempo real
+## 📋 Description
 
-### Detalhes Técnicos
+**NOKI Bin Dumpper** is a tool for extracting and converting encrypted .bin files from Albion Online. It decodes binary files to XML and JSON formats, allowing access to and study of the game's information.
 
-#### Criptografia
-- Algoritmo: Triple DES (3DES)
-- Modo: CBC (Cipher Block Chaining)
-- Tamanho da chave: 128 bits
-- IV: 8 bytes
-- Padding: PKCS7
+<p align="center">
+  <img src="preview.png" alt="Noki Bin Dumpper running" width="80%">
+</p>
 
-#### Compressão
-- Algoritmo: ZLIB
-- Window Bits: 31 (15 + 16 para formato gzip)
-- Formato de saída: XML com encoding UTF-8 + BOM
+## ✨ Features
 
-#### Sistema de Logging
-- Rotação automática de arquivos (máx. 5MB por arquivo)
-- Logs separados para validação e operações gerais
-- Relatórios JSON e TXT para análise detalhada
-- Categorização automática de arquivos processados
+- **Automatic detection** of Albion Online installation
+- **Multi-platform support**: Windows, macOS, and Linux
+- **Smart extraction** of game .bin files
+- **Conversion** to XML and JSON
+- **Intuitive command-line interface**
+- **Support for Live and Test servers**
+- **CI/CD integration** for automatic releases
 
-### Compatibilidade
-- Windows 7/8/10/11
-- Linux (todas distribuições principais)
-- macOS 10.15+
-- Python 3.12+
+## 🧪 Test Results
 
-### Instalação
-
-#### Via Executável (Recomendado)
-1. Baixe a última versão na [página de releases](../../releases)
-2. Extraia o arquivo (se necessário)
-3. Execute o programa:
-   - Windows: `noki.exe`
-   - Linux/macOS: `./noki` ou `python -m noki`
-
-#### Via Código Fonte
-1. Certifique-se de ter Python 3.12+ instalado
-2. Clone o repositório:
-   ```bash
-   git clone https://github.com/AO-Noki/noki-bin-dumpper.git
-   cd noki-bin-dumpper
-   ```
-3. Instale o pacote:
-   ```bash
-   # Instalação básica
-   pip install .
-   
-   # Ou com dependências de desenvolvimento
-   pip install -e ".[dev]"
-   ```
-
-### Uso
-
-#### Argumentos de Linha de Comando
-
-```bash
-noki [-h] [-t {1,2,3}] [-s {1,2}] [-g GAME_PATH] [-o OUTPUT_PATH]
+```text
+============================================= tests coverage ==============================================
+Name                        Stmts   Miss  Cover
+src\__init__.py                 6      0   100%
+src\core\Config.py             93     42    55%
+src\core\Platform.py          110     62    44%
+src\core\__init__.py            3      0   100%
+src\enums\__init__.py           2      0   100%
+src\enums\server_type.py        7      1    86%
+src\platforms\__init__.py       2      0   100%
+src\platforms\base.py          45     32    29%
+src\utils\Converter.py         23      3    87%
+src\utils\Crypto.py            19      1    95%
+src\utils\__init__.py           3      0   100%
+-----------------------------------------------
+TOTAL                         313    141    55%
+=========================================== 10 passed in 3.18s ============================================
 ```
 
-##### Argumentos Opcionais:
-- `-h, --help`: Mostra mensagem de ajuda
-- `-t, --export-type`: Formato de exportação
-  - `1`: Apenas RAW
-  - `2`: Apenas JSON Filtrado
-  - `3`: Ambos (padrão)
-- `-s, --server`: Tipo de servidor
-  - `1`: Servidor Live (padrão)
-  - `2`: Servidor Test
-- `-g, --game-path`: Caminho de instalação do jogo (detectado automaticamente se não fornecido)
-- `-o, --output-path`: Diretório de saída (usa './output' se não fornecido)
+## 🚀 Installation
 
-#### Exemplos
+### Via pip (recommended)
 
 ```bash
-# Uso básico (detecta caminho do jogo automaticamente)
-noki
+pip install noki-bin-dumpper
 ```
 
-#### Especifica caminho do jogo e diretório de saída
+### Pre-compiled executable
+
+Download the latest version for your operating system from [Releases](https://github.com/AO-Noki/noki-bin-dumpper/releases).
+
+### Install from source code
 
 ```bash
-noki -g "C:\Program Files (x86)\Albion Online" -o "C:\albion_data"
+git clone https://github.com/AO-Noki/noki-bin-dumpper.git
+cd noki-bin-dumpper
+pip install -e .
 ```
 
-#### Exporta apenas dados JSON do servidor de teste
+## 🔧 Requirements
+
+- Python 3.10+ (Python 3.13 recommended)
+- Albion Online installed (for direct extraction)
+
+## 📖 Usage
+
+### Executable
 
 ```bash
-noki -t 2 -s 2
+noki --path "C:\Program Files (x86)\Albion Online" --server live --output "./output"
 ```
 
-### Estrutura de Logs
-- `logs/`: Diretório principal de logs
-  - `noki-Dumpper_YYYYMMDD_HHMMSS.log`: Log principal de operações
-  - `validation/`: Logs de validação
-    - `validation_YYYYMMDD_HHMMSS.log`: Log detalhado de validações
-    - `validation_report_YYYYMMDD_HHMMSS.json`: Relatório em formato JSON
-    - `validation_summary_YYYYMMDD_HHMMSS.txt`: Resumo em formato texto
+### Via Python
 
-### Processo de Descriptografia
-1. Leitura do arquivo binário
-2. Descriptografia usando 3DES em modo CBC
-3. Remoção do padding PKCS7
-4. Descompressão ZLIB (wbits=31)
-5. Decodificação UTF-8 com remoção de BOM
-6. Validação do XML resultante
-7. Conversão para JSON (quando aplicável)
-8. Validação da conversão
+```bash
+python -m main --path "C:\Program Files (x86)\Albion Online" --server live --output "./output"
+```
 
-### Contato
-Discord: **n0k0606**
+### Options
+
+```text
+--path PATH           Albion Online installation path (required)
+--server [live|test]  Game server to export the files from (default: live)
+--output PATH         Output directory (optional, defaults to ./output)
+--help                Show help message and exit
+```
+
+## 🏗️ Build
+
+To build the executable:
+
+```bash
+python build.py
+```
+
+Options:
+
+```text
+--dir                 Build as directory instead of single file
+--no-console          Hide console (for GUI applications only)
+--no-zip              Don't create ZIP package
+--info                Show build information and exit
+```
+
+## 🔄 Development Workflow
+
+1. Automated tests verify basic functionality
+2. Code quality analysis ensures consistent standards
+3. CI/CD compiles and tests on multiple platforms and Python versions
+4. Releases are automatically published when a v*.*.* tag is created
+
+## 📜 License
+
+This project is distributed as Freeware.
+
+## 👥 Contributors
+
+- Brendown Ferreira - Lead Developer
+- AO-Noki Community Contributors
+
+## 📧 Contact
+
+- GitHub: [https://github.com/AO-Noki](https://github.com/AO-Noki)
+- Email: <br3n0k@gmail.com>
+
+## 🔗 Links
+
+- [Albion Online](https://albiononline.com/)
+- [GitHub Repository](https://github.com/AO-Noki/noki-bin-dumpper)
+- [Changelog](CHANGELOG.md)
