@@ -1,4 +1,7 @@
-from abc import ABC, abstractmethod
+"""
+Platform handling utilities for Noki Bin Dumpper.
+Provides file system operations abstracted from the underlying OS.
+"""
 import os
 import platform
 import logging
@@ -9,12 +12,18 @@ from ..enums import ServerType
 
 class PlatformHandler:
     """
-    Classe responsável por gerenciar as operações do sistema de arquivos
-    independente da plataforma.
+    Handler for platform-specific operations.
+    
+    This class manages file system operations and path resolution
+    across different operating systems, providing a unified interface
+    for the application.
     """
     
     def __init__(self):
+        """Initialize the platform handler with platform-specific paths."""
         self.logger = logging.getLogger(__name__)
+        
+        # Define default installation paths for supported platforms
         self._default_paths = {
             'Windows': Path("C:/Program Files (x86)/AlbionOnline"),
             'Linux': Path.home().joinpath(".steam/steam/steamapps/common/AlbionOnline"),
@@ -23,101 +32,112 @@ class PlatformHandler:
     
     def get_default_path(self) -> Optional[Path]:
         """
-        Retorna o caminho padrão de instalação do Albion Online
-        para a plataforma atual.
+        Get the default Albion Online installation path for the current platform.
+        
+        Returns:
+            Path: Default installation path for this platform or None if not supported
         """
         system = platform.system()
         return self._default_paths.get(system)
     
     def find_game_data_path(self, albion_path: Path, server_type: int) -> Path:
         """
-        Procura o caminho para a pasta GameData com base no caminho do Albion.
+        Find the GameData directory path based on Albion installation path.
         
         Args:
-            albion_path: O caminho base da instalação do Albion Online
-            server_type: O tipo de servidor (1 = Live, 2 = Test)
+            albion_path: Base installation path for Albion Online
+            server_type: Server type (1 = Live, 2 = Test)
             
         Returns:
-            O caminho para a pasta GameData
+            Path: Path to the GameData directory
+            
+        Raises:
+            ValueError: If paths are not defined
+            FileNotFoundError: If GameData directory is not found
         """
-        # Verifica se o caminho do Albion foi definido
+        # Validate parameters
         if not albion_path:
             raise ValueError("Albion Online installation path not defined. Use set_albion_path() first.")
         
-        # Verifica se o Server Type foi definido
         if not server_type:
             raise ValueError("Server type not defined. Use set_server_type() first.")
 
-        # Define o caminho da pasta GameData
-        game_data_path = os.path.join(albion_path, ServerType(server_type).folder_name, "Albion-Online_Data", "StreamingAssets", "GameData")
+        # Construct GameData path
+        game_data_path = os.path.join(
+            albion_path, 
+            ServerType(server_type).folder_name, 
+            "Albion-Online_Data", 
+            "StreamingAssets", 
+            "GameData"
+        )
 
-        # Verifica se o caminho da pasta GameData existe
+        # Validate path exists
         if not Path(game_data_path).exists():
-            raise FileNotFoundError("GameData directory not found.")
+            raise FileNotFoundError(f"GameData directory not found: {game_data_path}")
         
         return Path(game_data_path)
     
     def find_files(self, directory: Path, pattern: str = "*.bin") -> List[Path]:
         """
-        Encontra arquivos que correspondam ao padrão dentro do diretório.
+        Find files matching a pattern in a directory (recursively).
         
         Args:
-            directory: Diretório para procurar
-            pattern: Padrão glob de arquivos a serem procurados (padrão: *.bin)
+            directory: Directory to search in
+            pattern: Glob pattern to match files (default: *.bin)
             
         Returns:
-            Lista de caminhos encontrados
+            List[Path]: List of matching file paths
         """
         if not directory.exists():
             self.logger.warning(f"Directory not found: {directory}")
             return []
         
-        # Encontra todos os arquivos que correspondem ao padrão
+        # Find all files matching the pattern recursively
         files = list(directory.glob(f"**/{pattern}"))
 
-        # Exibe a quantidade de arquivos encontrados
+        # Log results
         self.logger.info(f"Found {len(files)} files matching pattern '{pattern}' in {directory}")
         
-        # Retorna a lista de arquivos encontrados
         return files
     
     def get_relative_path(self, output_path: Path, file_path: Path, base_path: Path) -> Path:
         """
-        Obtém o caminho relativo de um arquivo em relação ao caminho base,
-        mantendo a estrutura de pastas original do GameData.
+        Get the relative path while preserving the original directory structure.
+        
+        Creates a path that preserves the original structure but inside the output path.
         
         Args:
-            output_path: Caminho base de saída
-            file_path: Caminho completo do arquivo
-            base_path: Caminho base para cálculo do caminho relativo (GameData)
+            output_path: Base output path
+            file_path: Original file path
+            base_path: Base path to calculate relative path from
             
         Returns:
-            Caminho relativo do arquivo mantendo a estrutura de pastas original
+            Path: New path with preserved structure inside output_path
         """
         try:
-            # Obtém o caminho relativo a partir do GameData
+            # Get path relative to the base path
             relative = file_path.relative_to(base_path)
             
-            # Cria um novo caminho começando com o output_path
-            # Isso manterá a estrutura de pastas original
-            output_path = output_path.joinpath(relative)
+            # Create path starting with output_path while preserving structure
+            result_path = output_path.joinpath(relative)
             
-            return output_path
+            return result_path
         except ValueError:
-            # Se não for possível obter o caminho relativo, usa apenas o nome do arquivo
-            # mas ainda dentro da pasta output
-            self.logger.warning(f"Can't get relative path for {file_path}, using only the file name in output directory")
+            # If relative path can't be calculated, use just the filename
+            self.logger.warning(
+                f"Can't get relative path for {file_path}, using only the file name in output directory"
+            )
             return output_path.joinpath(file_path.name)
     
     def validate_paths(self, paths_to_check: Dict[str, Path]) -> Dict[str, bool]:
         """
-        Valida se os caminhos especificados existem.
+        Validate that paths exist.
         
         Args:
-            paths_to_check: Dicionário com nome e caminho a ser verificado
+            paths_to_check: Dictionary of {name: path} to validate
             
         Returns:
-            Dicionário com resultado da validação para cada caminho
+            Dict[str, bool]: Results of validation for each path
         """
         result = {}
         for name, path in paths_to_check.items():

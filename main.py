@@ -1,92 +1,116 @@
 #!/usr/bin/env python
+"""
+Noki Bin Dumpper - Albion Online Data Extractor
+Main entry point for the application
+"""
 import sys
 import os
 
-# Impedir criação de chache do python completamente
+# Prevent Python from creating cache files
 os.environ["PYTHONDONTWRITEBYTECODE"] = "1"
-sys.dont_write_bytecode = True
 
 import io
 import argparse
-
-# Forçar UTF-8 para saída do console
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
-sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
-
 from pathlib import Path
 from rich.markdown import Markdown
 
+# Force UTF-8 for console output to handle special characters properly
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
+
 from src import Config, Terminal, Platform, ServerType
 
-# Cria uma env com a raiz do projeto e inicializa as configurações
-os.environ["AONOKI-DUMPPER-PATH"] = os.path.dirname(os.path.abspath(__file__))
-
-# Inicializa as configurações
-Config.initialize_paths(os.environ["AONOKI-DUMPPER-PATH"])
-
-# Configura o logging
-Config.setup_logging()
-
-def run():
-
-    # Exibe o banner do aplicativo
-    Terminal.print(Config.create_banner())
+def setup_environment():
+    """Configure the environment and initialize paths."""
+    # Set root path environment variable
+    root_path = os.path.dirname(os.path.abspath(__file__))
+    os.environ["AONOKI-DUMPPER-PATH"] = root_path
     
-    # Verificar atualizações
-    update_info = Config.check_for_updates()
+    # Initialize configuration paths
+    Config.initialize_paths(root_path)
+    
+    # Setup logging
+    Config.setup_logging()
 
+def parse_arguments():
+    """Parse command line arguments."""
+    parser = argparse.ArgumentParser(description='Albion Online Data Dumpper')
+    
+    parser.add_argument(
+        '--path', 
+        required=True, 
+        help='Albion Online installation path'
+    )
+    
+    parser.add_argument(
+        '--server', 
+        choices=['live', 'test'], 
+        default='live',
+        help='Game Server to export the files (default: live)'
+    )
+    
+    parser.add_argument(
+        '--output', 
+        default=None,
+        help='Output directory (optional)'
+    )
+    
+    return parser.parse_args()
+
+def check_update():
+    """Check for updates and display notification if available."""
+    update_info = Config.check_for_updates()
 
     if update_info:
         Terminal.print(f"====================================================")
-        Terminal.print(f"Nova versão disponível: v{update_info['latest_version']} (atual: v{update_info['current_version']})")
-        Terminal.print(f"Acesse: {update_info['release_url']}")
+        Terminal.print(f"New version available: v{update_info['latest_version']} (current: v{update_info['current_version']})")
+        Terminal.print(f"Download: {update_info['release_url']}")
         
-        # Exibir notas da versão se disponíveis
+        # Display release notes if available
         if update_info['release_notes']:
-            Terminal.print("\nNotas da versão:")
+            Terminal.print("\nRelease notes:")
             Terminal.print(Markdown(update_info['release_notes']))
         Terminal.print(f"====================================================")
+
+def run():
+    """Main entry point for the application."""
+    # Setup environment
+    setup_environment()
     
-    # Define os argumentos do comando
-    parser = argparse.ArgumentParser(description='Albion Online Data Dumpper')
-    parser.add_argument('--path', required=True, 
-                       help='Albion Online installation path')
-    parser.add_argument('--server', choices=['live', 'test'], default='live',
-                       help='Game Server to export the files (default: live)')
-    parser.add_argument('--output', default=None,
-                       help='Output directory (optional)')
+    # Display application banner
+    Terminal.print(Config.create_banner())
     
-    # Obtém os argumentos passados
-    args = parser.parse_args()
+    # Check for updates
+    check_update()
     
-    # Verifica se o caminho do Albion existe
+    # Parse command line arguments
+    args = parse_arguments()
+    
+    # Validate Albion Online path
     albion_path = Path(args.path)
     if not albion_path.exists():
         Terminal.print(f"Albion Online installation path not found: {albion_path}")
         sys.exit(1)
     
-    # Define o diretório de saída
+    # Configure output directory
     output_dir = args.output
-
     if output_dir is None:
         output_dir = Config.OUTPUT_DIR
     else:
         output_dir = Path(output_dir)
-        if not output_dir.exists():
-            os.makedirs(output_dir, exist_ok=True)
+        os.makedirs(output_dir, exist_ok=True)
     
-    # Define o tipo de servidor
+    # Set server type
     server_type = ServerType.LIVE if args.server == 'live' else ServerType.TEST
     
-    # Inicializa a plataforma
+    # Initialize platform and run extraction
     platform = Platform()
     platform.set_albion_path(albion_path)
     platform.set_server_type(server_type)
     platform.set_output_path(output_dir)
     
-    # Executa o processo de extração
+    # Run extraction process
     platform.run_extraction()
 
 if __name__ == "__main__":
-    # Executa o programa
     run()

@@ -1,6 +1,6 @@
 # IDEs e editores
-.vscode/
-.idea/
+/.vscode/
+/.idea/
 *.sublime-project
 *.sublime-workspace
 
