@@ -1,15 +1,16 @@
-from datetime import datetime
+import sys
 import os
 import logging
-from pathlib import Path
 import requests
+
+from datetime import datetime
+from pathlib import Path
 from packaging import version
 from pydantic import BaseModel
 from typing import Optional, Any
 from rich.theme import Theme
 from rich.console import Console
 from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TimeElapsedColumn
-import sys
 
 class Settings(BaseModel):
     """Configurações globais do aplicativo."""
@@ -64,8 +65,8 @@ class Settings(BaseModel):
         """
         if root_path:
             self._root_dir = Path(root_path)
-        elif "NOKI_DUMPPER_ROOT" in os.environ:
-            self._root_dir = Path(os.environ["NOKI_DUMPPER_ROOT"])
+        elif "AONOKI-DUMPPER-PATH" in os.environ:
+            self._root_dir = Path(os.environ["AONOKI-DUMPPER-PATH"])
         else:
             # Fallback para o diretório atual se não for possível determinar a raiz
             self._root_dir = Path(os.getcwd())
@@ -211,12 +212,10 @@ class Settings(BaseModel):
         return logging.getLogger()
 
 # Cria uma instância da classe Settings
-config = Settings() 
+Config = Settings() 
 
 # Cria uma instância do console
-console = config.create_console()
+Terminal = Config.create_console()
 
 # Cria uma instância do logger
-logger = config.create_logger()
-
-
+logger = Config.create_logger()

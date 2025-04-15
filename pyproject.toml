@@ -10,6 +10,7 @@ description = "Albion Online Bin Dumper"
 authors = [{name = "Brendown Ferreira", email = "br3n0k@gmail.com"}]
 license = { text = "Freeware" }
 dependencies = [
+    "xmltodict",
     "black",
     "cryptography",
     "flake8",
@@ -28,17 +29,17 @@ dependencies = [
 ]
 
 [project.scripts]
-noki = "main:main"
+main = "main:main"
 
 [tool.setuptools]
-packages = ["noki"]
+packages = ["src",]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
 
 [tool.poetry.scripts]
-run = "python -m noki"
-build = "pyinstaller --onefile noki-dumper.py"
+run = "python -m main"
+build = "pyinstaller --onefile main.py"
 test = "pytest"
 lint = "flake8" 

@@ -9,13 +9,13 @@ from pathlib import Path
 
 # Importa a versão do projeto
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from noki.core.config import config
+from src.core.config import Config
 
 # Informações do projeto
-APP_NAME = config.NAME
-VERSION = config.VERSION
-AUTHOR = config.AUTHOR
-DESCRIPTION = config.DESCRIPTION
+APP_NAME = Config.NAME
+VERSION = Config.VERSION
+AUTHOR = Config.AUTHOR
+DESCRIPTION = Config.DESCRIPTION
 
 # Detecta a plataforma atual
 SYSTEM = platform.system().lower()
