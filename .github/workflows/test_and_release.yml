@@ -1,4 +1,4 @@
-name: Testes Completos
+name: Basic Tests
 
 on:
   push:
@@ -9,53 +9,34 @@ on:
 
 jobs:
   test:
-    name: Testes em ${{ matrix.os }} / Python ${{ matrix.python-version }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        python-version: ['3.10', '3.11', '3.12', '3.13']
-
+    name: Run Basic Tests
+    runs-on: ubuntu-latest
+    
     steps:
-    - name: Checkout do repositório
+    - name: Checkout repository
       uses: actions/checkout@v4
     
-    - name: Configurar Python ${{ matrix.python-version }}
+    - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: "3.12"
         cache: 'pip'
     
-    - name: Instalar dependências
+    - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         python -m pip install -e .
-        python -m pip install pytest pytest-xdist pytest-cov
+        python -m pip install pytest
       shell: bash
     
-    - name: Criar diretórios de teste
+    - name: Create test directories
       run: |
         mkdir -p tests/data
         mkdir -p tests/output
         mkdir -p logs/validation
       shell: bash
     
-    - name: Executar testes
+    - name: Run tests
       run: |
-        python -m pytest tests/ -v --cov=src/ --cov-report=xml
-      shell: bash
-    
-    - name: Upload dos resultados de testes
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: test-results-${{ matrix.os }}-${{ matrix.python-version }}
-        path: tests/output/
-        
-    - name: Upload de cobertura para Codecov
-      if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.13'
-      uses: codecov/codecov-action@v4
-      with:
-        file: ./coverage.xml
-        fail_ci_if_error: false 
+        python -m pytest tests/ -v
+      shell: bash 

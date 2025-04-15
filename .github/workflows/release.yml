@@ -1,4 +1,4 @@
-name: Publicar Release
+name: GitHub Release
 
 on:
   push:
@@ -7,39 +7,48 @@ on:
 
 jobs:
   build:
-    name: Construir e Publicar
+    name: Build and Release
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      id-token: write
 
     steps:
-      - name: Checkout do código
+      - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Configurar Python
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
           cache: 'pip'
 
-      - name: Instalar dependências
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install build twine
+          pip install build
           pip install -e .
 
-      - name: Construir pacote
+      - name: Build Windows package
         run: |
-          python -m build
+          python build.py --info
+          python build.py --no-console
 
-      - name: Criar Release
+      - name: Build macOS package
+        run: |
+          python build.py --info
+          SYSTEM=darwin PLATFORM=macos python build.py --no-console
+
+      - name: Build Linux package
+        run: |
+          python build.py --info
+          SYSTEM=linux PLATFORM=linux python build.py --no-console
+
+      - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           files: dist/*
           generate_release_notes: true
-
-      - name: Publicar no PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1 
+          draft: false
+          prerelease: false 
