@@ -17,7 +17,6 @@ dependencies = [
     "isort",
     "mypy",
     "packaging",
-    "pathlib",
     "pydantic",
     "pyinstaller",
     "pytest",

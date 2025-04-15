@@ -7,9 +7,12 @@ import os
 import sys
 from pathlib import Path
 
-# Importa a versão do projeto
+# Importa a configuração do projeto
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from src.core.config import Config
+from src.core.Config import Settings
+
+# Cria instância de configuração
+Config = Settings()
 
 # Informações do projeto
 APP_NAME = Config.NAME
@@ -46,21 +49,23 @@ OUTPUT_FILENAME = f"{APP_NAME}-{VERSION}-{PLATFORM}-{ARCH}"
 ROOT_DIR = Path(os.path.dirname(os.path.abspath(__file__)))
 BUILD_DIR = ROOT_DIR / "build"
 DIST_DIR = ROOT_DIR / "dist"
+ASSET_DIR = ROOT_DIR / "assets"
 
 # Arquivos a serem incluídos no pacote
 INCLUDE_FILES = [
     ("README.md", "README.md"),
     ("LICENSE", "LICENSE"),
+    ("CHANGELOG.md", "CHANGELOG.md"),
 ]
 
 # Diretórios a serem incluídos
 INCLUDE_DIRS = [
-    ("noki", "noki"),
+    ("src", "src"),
 ]
 
 # Pacotes Python a serem incluídos
 INCLUDE_PACKAGES = [
-    "noki",
+    "src",
 ]
 
 # Excluir estes arquivos/diretórios
@@ -77,9 +82,9 @@ EXCLUDE_PATTERNS = [
 
 # Ícones para cada plataforma
 ICONS = {
-    "windows": ROOT_DIR / "assets" / "icon.ico",
-    "macos": ROOT_DIR / "assets" / "icon.icns",
-    "linux": ROOT_DIR / "assets" / "icon.png",
+    "windows": ASSET_DIR / "icon.ico",
+    "macos": ASSET_DIR / "icon.icns",
+    "linux": ASSET_DIR / "icon.png",
 }
 
 def get_icon_path():
@@ -87,4 +92,17 @@ def get_icon_path():
     icon_path = ICONS.get(PLATFORM)
     if icon_path and icon_path.exists():
         return str(icon_path)
-    return None 
+    return None
+
+def print_build_info():
+    """Imprime informações sobre a configuração de build"""
+    print(f"=== Configuração de Build para {APP_NAME} v{VERSION} ===")
+    print(f"Sistema: {SYSTEM}")
+    print(f"Plataforma: {PLATFORM}")
+    print(f"Arquitetura: {ARCH}")
+    print(f"Nome do arquivo de saída: {OUTPUT_FILENAME}")
+    print(f"Diretório raiz: {ROOT_DIR}")
+    print(f"Diretório de build: {BUILD_DIR}")
+    print(f"Diretório de distribuição: {DIST_DIR}")
+    print(f"Ícone: {get_icon_path() or 'Não encontrado'}")
+    print("=" * 50) 
